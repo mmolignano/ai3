@@ -60,7 +60,7 @@ public class BigramModel implements Model {
 			String pc = null;
 			int c = fr.read();
 			while(c > -1){
-				String s = Character.toChars(c).toString();
+				String s = Character.toString((char)c);
 				if (!(s.equals(",") || s.equals(" ") || s.equals("\n") || s.equals("\t") || s.equals("\r"))){
 					if (pc == null){
 						pc = s;
