@@ -1,6 +1,7 @@
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.regex.*;
 
 
 public class AI3 {
@@ -14,6 +15,8 @@ public class AI3 {
 			System.out.println("Usage: [Model] Train Test");
 		}else{
 			Model l = new UnigramModel();
+			Pattern pat = Pattern.compile("^(\\d+)nearest$",Pattern.CASE_INSENSITIVE);
+			Matcher m = pat.matcher(args[0]);
 			if (args.length == 3){
 				if (args[0].equalsIgnoreCase("bigram")){
 					l = new BigramModel();
@@ -21,6 +24,9 @@ public class AI3 {
 					l = new TrigramModel();
 				}else if (args[0].equalsIgnoreCase("stargram")){
 					l = new StargramModel();
+				}else if (m.matches()){
+					int k = Integer.parseInt(m.group(1));
+					l = new KNearestModel(k);
 				}
 			}
 			String train;
