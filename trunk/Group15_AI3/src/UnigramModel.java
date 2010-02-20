@@ -1,4 +1,6 @@
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.HashMap;
 
 
@@ -37,7 +39,7 @@ public class UnigramModel implements Model {
 			FileReader fr = new FileReader(trainFile);
 			int c = fr.read();
 			while (c > -1){
-				String s = Character.toChars(c).toString();
+				String s = Character.toString((char) c);
 				if (!(s.equals(",") || s.equals("\n") || s.equals(" ") || s.equals("\t") || s.equals("\r"))){
 					if (this.fmap.containsKey(s)){
 						this.fmap.put(s, this.fmap.get(s) + 1);
@@ -45,6 +47,7 @@ public class UnigramModel implements Model {
 						this.fmap.put(s, 1);
 					}
 				}
+				c = fr.read();
 			}
 			fr.close();
 		}catch (FileNotFoundException e){
