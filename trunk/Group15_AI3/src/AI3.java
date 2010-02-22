@@ -74,6 +74,9 @@ public class AI3 {
 					c = fr.read();
 				}
 				fr.close();
+				if (peek) {
+					guessed -= 5; // Subtract 5 if used the peek function
+				}
 				float correct = ((float)guessed/(float)total) * 100;
 				System.out.print("Correctly Guessed ");
 				System.out.print(correct);
