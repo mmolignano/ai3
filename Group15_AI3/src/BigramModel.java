@@ -3,7 +3,14 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 
-
+/**
+ * Class represents the Bigram model. Keeps track of seen bigrams and compares
+ * the most probable next character from this hashmap. The one that occured the
+ * most is guessed next.
+ * 
+ * @author Michael Molignano, Chris Pardy, Rich Pavis, John Sandbrook
+ *
+ */
 public class BigramModel implements Model {
 
 	private UnigramModel um;

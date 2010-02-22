@@ -4,7 +4,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-
+/**
+ * Class to represent the KNearest Model. This class keeps track of past
+ * characters in a map based upon their string order. When it is time to
+ * predict a new character, it looks at the k closest nodes in the map
+ * and uses the most from that group.
+ * 
+ * @author Michael Molignano, Chris Pardy, Rich Pavis, John Sandbrook
+ *
+ */
 public class KNearestModel implements Model {
 
 	private int k;

@@ -3,6 +3,14 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 
+/**
+ * Class represents the Trigram model. Keeps track of seen trigrams and compares
+ * the most probable next character from this hashmap. The one that occured the
+ * most is guessed next.
+ * 
+ * @author Michael Molignano, Chris Pardy, Rich Pavis, John Sandbrook
+ *
+ */
 public class TrigramModel implements Model {
 
 	public BigramModel bm;
