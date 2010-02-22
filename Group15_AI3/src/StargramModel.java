@@ -10,14 +10,24 @@ public class StargramModel implements Model {
 	private UnigramModel um;
 	private String traindat;
 	
+	private HashMap<String, Integer> peekmap;
+	
 	public StargramModel(){
 		this.um = new UnigramModel();
 		this.traindat = "";
+		
+		this.peekmap = new HashMap<String, Integer>();
 	}
 	
 	@Override
-	public String predict(String previousChars) {
-		String up = this.um.predict(previousChars);
+	public String predict(String previousChars, boolean peek) {
+		String up = this.um.predict(previousChars, peek);
+		if (peek) {	// Reduce amount of this character left in test data
+			if (previousChars.length() > 0){
+				String pc = previousChars.substring(previousChars.length() - 1, previousChars.length());
+				this.peekmap.put(pc, this.peekmap.get(pc) - 1);
+			}
+		}
 		int len = Math.min(this.traindat.length() - 1,previousChars.length());
 		HashMap<String,Integer> fmap = new HashMap<String,Integer>();
 		int flen = 1;
@@ -74,9 +84,16 @@ public class StargramModel implements Model {
 		String m = null;
 		int occur = 0;
 		for(String k : fmap.keySet()){
-			if (fmap.get(k) > occur){
-				m = k;
-				occur = fmap.get(k);
+			if (peek) {
+				if (fmap.get(k) * peekmap.get(k) > occur){
+					m = k;
+					occur = fmap.get(k) * peekmap.get(k);
+				}
+			} else {
+				if (fmap.get(k) > occur){
+					m = k;
+					occur = fmap.get(k);
+				}
 			}
 		}
 		if (m == null){
@@ -105,6 +122,33 @@ public class StargramModel implements Model {
 			System.exit(-1);
 		}catch (IOException e){
 			System.err.println("Error, could not read train data");
+			System.exit(-1);
+		}
+	}
+	
+	@Override
+	public void peek(String testFile) {
+		this.um.peek(testFile);
+		try{
+			FileReader fr = new FileReader(testFile);
+			int c = fr.read();
+			while (c > -1){
+				String s = Character.toString((char) c);
+				if (!(s.equals(",") || s.equals("\n") || s.equals(" ") || s.equals("\t") || s.equals("\r"))){
+					if (this.peekmap.containsKey(s)){
+						this.peekmap.put(s, this.peekmap.get(s) + 1);
+					}else{
+						this.peekmap.put(s, 1);
+					}
+				}
+				c = fr.read();
+			}
+			fr.close();
+		}catch (FileNotFoundException e){
+			System.err.println("Error, could not open test file");
+			System.exit(-1);
+		}catch (IOException e){
+			System.err.println("Error, could not read test data");
 			System.exit(-1);
 		}
 	}

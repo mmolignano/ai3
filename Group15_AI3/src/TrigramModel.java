@@ -7,15 +7,17 @@ public class TrigramModel implements Model {
 
 	public BigramModel bm;
 	public HashMap<String,HashMap<String,HashMap<String,Integer>>> fmap;
+	public HashMap<String, Integer> peekmap;
 	
 	public TrigramModel(){
 		this.bm = new BigramModel();
 		this.fmap = new HashMap<String,HashMap<String,HashMap<String,Integer>>>();
+		this.peekmap = new HashMap<String, Integer>();
 	}
 	
 	@Override
-	public String predict(String previousChars) {
-		String bp = this.bm.predict(previousChars);
+	public String predict(String previousChars, boolean peek) {
+		String bp = this.bm.predict(previousChars, peek);
 		if (previousChars.length() > 2){
 			String hp = previousChars.substring(previousChars.length()-3,previousChars.length()-2);
 			String tp = previousChars.substring(previousChars.length()-2,previousChars.length()-1);
@@ -39,6 +41,9 @@ public class TrigramModel implements Model {
 				th2.put(tp,th1);
 				this.fmap.put(hp,th2);
 			}
+			if (peek) {	// Reduce amount of this character left in test data
+				this.peekmap.put(pc, this.peekmap.get(pc) - 1);
+			}
 		}
 		if (previousChars.length() > 1){
 			String tp = previousChars.substring(previousChars.length()-2,previousChars.length()-1);
@@ -48,9 +53,16 @@ public class TrigramModel implements Model {
 					String m = null;
 					int occur = 0;
 					for (String k : this.fmap.get(tp).get(pc).keySet()){
-						if(this.fmap.get(tp).get(pc).get(k) > occur){
-							m = k;
-							occur = this.fmap.get(tp).get(pc).get(k);
+						if (peek) {
+							if (this.fmap.get(tp).get(pc).get(k) * this.peekmap.get(k) > occur) {
+								m = k;
+								occur = this.fmap.get(tp).get(pc).get(k) * this.peekmap.get(k);
+							}	
+						} else {
+							if(this.fmap.get(tp).get(pc).get(k) > occur){
+								m = k;
+								occur = this.fmap.get(tp).get(pc).get(k);		
+							}
 						}
 					}
 					return m;
@@ -112,6 +124,33 @@ public class TrigramModel implements Model {
 			System.exit(-1);
 		}catch (IOException e){
 			System.err.println("Error, could not read train data");
+			System.exit(-1);
+		}
+	}
+
+	@Override
+	public void peek(String testFile) {
+		this.bm.peek(testFile);
+		try{
+			FileReader fr = new FileReader(testFile);
+			int c = fr.read();
+			while (c > -1){
+				String s = Character.toString((char) c);
+				if (!(s.equals(",") || s.equals("\n") || s.equals(" ") || s.equals("\t") || s.equals("\r"))){
+					if (this.peekmap.containsKey(s)){
+						this.peekmap.put(s, this.peekmap.get(s) + 1);
+					}else{
+						this.peekmap.put(s, 1);
+					}
+				}
+				c = fr.read();
+			}
+			fr.close();
+		}catch (FileNotFoundException e){
+			System.err.println("Error, could not open test file");
+			System.exit(-1);
+		}catch (IOException e){
+			System.err.println("Error, could not read test data");
 			System.exit(-1);
 		}
 	}
