@@ -3,7 +3,15 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.regex.*;
 
-
+/**
+ * Main class to run our program
+ * 
+ * Takes in parameters for which model to run, and the path for the train and
+ * test set as well as whether to run the peek function.
+ * 
+ * @author Michael Molignano, Chris Pardy, Rich Pavis, John Sandbrook
+ *
+ */
 public class AI3 {
 
 	/**
@@ -13,7 +21,7 @@ public class AI3 {
 		// TODO Auto-generated method stub
 		if (args.length < 3){
 			System.out.println("Usage: Model Train Test [peek]");
-			System.out.println("\tModel can be any of {unigram,bigram,trigram,stargram,*nearest} where * is replaced by an integer k");
+			System.out.println("\tModel can be any of {unigram,bigram,trigram,combined,stargram,*nearest} where * is replaced by an integer k");
 			System.out.println("\tTrain and Test are the filepaths for the Train and Test data");
 			System.out.println("\tpeek can be {true,false} depending on if you want the ability to peek at the test data when predicting");
 		}else{
@@ -27,6 +35,8 @@ public class AI3 {
 					l = new TrigramModel();
 				}else if (args[0].equalsIgnoreCase("stargram")){
 					l = new StargramModel();
+				}else if (args[0].equalsIgnoreCase("combined")){
+					l = new CombinedModel();
 				}else if (m.matches()){
 					int k = Integer.parseInt(m.group(1));
 					l = new KNearestModel(k);
@@ -47,7 +57,7 @@ public class AI3 {
 			}
 			l.train(train);
 			String p = "";
-			if (peek) { 	// TODO : Find credible way to put this in
+			if (peek) {
 				l.peek(test);
 			}
 			try{

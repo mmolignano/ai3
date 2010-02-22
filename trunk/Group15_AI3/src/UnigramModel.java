@@ -3,7 +3,14 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 
-
+/**
+ * Class to represent the Unigram model. This class keeps track of how many of
+ * each character has been seen in the train and test set. It uses this to
+ * predict the next character based on what has occured the most in the past.
+ * 
+ * @author Michael Molignano, Chris Pardy, Rich Pavis, John Sandbrook
+ *
+ */
 public class UnigramModel implements Model {
 
 	private HashMap<String,Integer> fmap;

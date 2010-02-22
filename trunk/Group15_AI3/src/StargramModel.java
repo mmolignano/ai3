@@ -4,7 +4,14 @@ import java.io.IOException;
 import java.lang.Math;
 import java.util.HashMap;
 
-
+/**
+ * Class for the Stargram model. This class finds the longest previous string
+ * that matches what is currently being read in by the test set, both from
+ * previous characters in the test set but also from the train set.
+ * 
+ * @author Michael Molignano, Chris Pardy, Rich Pavis, John Sandbrook
+ *
+ */
 public class StargramModel implements Model {
 
 	private UnigramModel um;
